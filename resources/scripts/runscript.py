@@ -3,7 +3,15 @@ import os
 
 # read variables
 internal_port = os.environ['internal_port']
-init_database = os.environ['init_database']
+
+init_postgres_host = os.environ['init_postgres_host']
+init_db_user = os.environ['init_db_user']
+init_db_password = os.environ['init_db_password']
+init_db_name = os.environ['init_db_name']
+init_db_port = os.environ['init_db_port']
+
+init_database = f"postgres://{init_db_user}:{init_db_password}@{init_postgres_host}:{init_db_port}/{init_db_name}"
+
 init_i18n = os.environ['init_i18n']
 init_use_tz = os.environ['init_use_tz']
 init_timezone = os.environ['init_timezone']
