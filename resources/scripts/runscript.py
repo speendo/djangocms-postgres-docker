@@ -41,6 +41,6 @@ if use_gunicorn.lower() == "yes":
 	os.system("/app/djangocms/manage.py collectstatic --noinput --link")
 
 	# this should run forever
-	os.system(f"su - www-data -c \"gunicorn --chdir /app/djangocms/ djangocms.wsgi -b 0.0.0.0:{internal_port} --workers={gunicorn_number_of_workers}\"")
+	os.system(f"su --shell /bin/sh www-data -c \"gunicorn --chdir /app/djangocms/ djangocms.wsgi -b 0.0.0.0:{internal_port} --workers={gunicorn_number_of_workers}\"")
 else:
-	os.system(f"/app/djangocms/manage.py runserver {internal_port}")
+	os.system(f"su --shell /bin/sh www-data -c \"/app/djangocms/manage.py runserver {internal_port}\"")

@@ -7,24 +7,23 @@ WORKDIR /app
 COPY resources .
 
 RUN apt-get update; \
-    apt-get upgrade -y; \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
         libtiff-dev \
         libjpeg-dev \
         zlib1g-dev \
         libfreetype6-dev \
         python3-venv \
-        python3-psycopg2; \
-    pip3 install -r lib/requirements.txt; \
-    pip3 install -r /app/lib/djangocmsrequirements.txt; \
-    apt-get autoremove; \
+        python3-psycopg2 && \
+    pip3 --no-cache-dir install -r lib/requirements.txt && \
+    pip3 --no-cache-dir install -r /app/lib/djangocmsrequirements.txt && \
+    apt-get autoremove && \
     apt-get clean;
     
 # make directory
-VOLUME /app/djangocms
-RUN mkdir /var/www; \
-    chsh -s /bin/bash www-data;  \
-    chown -R www-data:www-data djangocms; \
+VOLUME /app/djangocms-app
+RUN mkdir /var/www && \
+    chown -R www-data:www-data djangocms-app && \
     chown -R www-data:www-data /var/www;
 
 ENV internal_port=8000
@@ -46,13 +45,13 @@ ENV init_db_name=postgres
 ENV init_db_port=5432
 ENV init_database=postgres://$init_db_user:$init_db_password@$init_postgres_host:$init_db_port/$init_db_name
 
-ENV VIRTUAL_ENV=/app/djangocms
+ENV VIRTUAL_ENV=/app/djangocms-app
 RUN python3 -m venv $VIRTUAL_ENV --system-site-packages
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Finally, start the server
 EXPOSE $internal_port
-STOPSIGNAL SIGTERM
+# STOPSIGNAL SIGTERM
 
 VOLUME /app
 

@@ -8,8 +8,8 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    volumes:
-      - ./djangodb:/var/lib/postgresql/data      
+#    volumes:
+#      - ./djangodb:/var/lib/postgresql/data      
     networks:
       - django-cms
 
@@ -30,8 +30,8 @@ services:
       - init_db_name=postgres
       - use_gunicorn=yes
       - gunicorn_number_of_workers=4
-    volumes:
-      - ./djangocms:/app/djangocms
+#    volumes:
+#      - ./djangocms:/app/djangocms
     ports:
       - 9090:9090
     depends_on:
