@@ -15,7 +15,7 @@ services:
 
   app:
     container_name: django-cms-app
-    image: speendo/djangocms-posgresql:latest
+    build: .
     environment:
       - init_i18n=yes
       - init_use-tz=yes
