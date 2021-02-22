@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  db:
+    container_name: django-cms-db
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./djangodb:/var/lib/postgresql/data      
+    networks:
+      - django-cms
+
+  app:
+    container_name: django-cms-app
+    build: .
+    environment:
+      - init_i18n=yes
+      - init_use-tz=yes
+      - init_permissions=yes
+      - init_languages=de en
+      - init_bootstrap=yes
+      - init_starting-page=no
+      - internal_port=9090
+      - init_postgres_host=db
+      - init_db_user=postgres
+      - init_db_password=postgres
+      - init_db_name=postgres
+      - use_gunicorn=yes
+      - gunicorn_number_of_workers=4
+    volumes:
+      - ./djangocms:/app/djangocms
+    ports:
+      - 9090:9090
+    depends_on:
+      - db
+    networks:
+      - django-cms
+
+networks:
+  django-cms:

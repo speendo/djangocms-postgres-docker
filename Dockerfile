@@ -1,0 +1,59 @@
+FROM python:3.9.1-slim-buster
+MAINTAINER Marcel Jira <marcel.jira@gmail.com>
+
+ENV PYTHONUNBUFFERED 1
+
+WORKDIR /app
+COPY resources .
+
+RUN apt-get update; \
+    apt-get upgrade -y; \
+    apt-get install -y --no-install-recommends \
+        libtiff-dev \
+        libjpeg-dev \
+        zlib1g-dev \
+        libfreetype6-dev \
+        python3-venv \
+        python3-psycopg2; \
+    pip3 install -r lib/requirements.txt; \
+    pip3 install -r /app/lib/djangocmsrequirements.txt; \
+    apt-get autoremove; \
+    apt-get clean;
+    
+# make directory
+VOLUME /app/djangocms
+RUN mkdir /var/www; \
+    chsh -s /bin/bash www-data;  \
+    chown -R www-data:www-data djangocms; \
+    chown -R www-data:www-data /var/www;
+
+ENV internal_port=8000
+ENV use_gunicorn=yes
+ENV gunicorn_number_of_workers=2
+
+ENV init_i18n=yes
+ENV init_use_tz=yes
+ENV init_timezone=
+ENV init_permissions=yes
+ENV init_languages=
+ENV init_bootstrap=no
+ENV init_starting_page=no
+
+ENV init_postgres_host=db
+ENV init_db_user=postgres
+ENV init_db_password=postgres
+ENV init_db_name=postgres
+ENV init_db_port=5432
+ENV init_database=postgres://$init_db_user:$init_db_password@$init_postgres_host:$init_db_port/$init_db_name
+
+ENV VIRTUAL_ENV=/app/djangocms
+RUN python3 -m venv $VIRTUAL_ENV --system-site-packages
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Finally, start the server
+EXPOSE $internal_port
+STOPSIGNAL SIGTERM
+
+VOLUME /app
+
+CMD python3 scripts/runscript.py

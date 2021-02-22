@@ -1,0 +1,11 @@
+# Wheel
+wheel
+
+# Django-CMS
+djangocms-installer
+
+# PostgreSQL
+psycopg2-binary
+
+# Gunicorn
+gunicorn
