@@ -1,6 +1,10 @@
 #!/usr/bin/python3
 import os
 
+import time
+import sys
+import psycopg2
+
 # read variables
 internal_port = os.environ['internal_port']
 
@@ -64,6 +68,24 @@ init_use_tz = "no" if init_use_tz == "no" else "yes"
 init_permissions = "yes" if init_permissions == "yes" else "no"
 init_bootstrap = "yes" if init_bootstrap == "yes" else "no"
 init_starting_page = "yes" if init_starting_page == "yes" else "no"
+
+# test database connection
+
+db_ready = None
+db_connect_attempts = 0
+while db_ready == None:
+	db_connect_attempts += 1
+	try:
+		db_ready = psycopg2.connect(dbname=init_db, user=init_db_user, host=init_postgres_host, port=init_db_port, password=init_db_password)
+	except:
+		print(f"Failed to connect to database (tried {db_connect_attempts} of 300 times).")
+		if db_connect_attempts < 300:
+			print("Retrying in 3 seconds.")
+			time.sleep(3)
+		else:
+			print("Giving up.")
+			sys.exit(1)
+db_ready.close()			
 
 # check if manage.py was already created
 firstrun = not os.path.isfile("djangocms/manage.py")

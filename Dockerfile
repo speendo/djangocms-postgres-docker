@@ -55,6 +55,6 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 EXPOSE $internal_port
 # STOPSIGNAL SIGTERM
 
-VOLUME /app
+VOLUME $VIRTUAL_ENV
 
 CMD python3 scripts/runscript.py
