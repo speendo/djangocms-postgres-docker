@@ -85,6 +85,7 @@ while db_ready == None:
 		else:
 			print("Giving up.")
 			sys.exit(1)
+print("Database is ready.")
 db_ready.close()			
 
 # check if manage.py was already created
