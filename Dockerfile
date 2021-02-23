@@ -39,10 +39,13 @@ ENV init_bootstrap=no
 ENV init_starting_page=no
 
 ENV init_postgres_host=db
-ENV init_db_user=postgres
-ENV init_db_password=postgres
-ENV init_db_name=postgres
 ENV init_db_port=5432
+
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
+ENV POSTGRES_DB=postgres
+
+ENV POSTGRES_PASSWORD_FILE=
 
 ENV VIRTUAL_ENV=/app/djangocms-app
 RUN python3 -m venv $VIRTUAL_ENV --system-site-packages

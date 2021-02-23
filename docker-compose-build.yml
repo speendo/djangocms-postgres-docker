@@ -2,42 +2,47 @@ version: '3'
 
 services:
   db:
-    container_name: django-cms-db
+    container_name: djangocms-db
     image: postgres
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    restart: unless-stopped
+    env_file:
+      - env/postgres.env
     volumes:
       - ./djangodb:/var/lib/postgresql/data      
+    secrets:
+      - postgres_db
+      - postgres_user
+      - postgres_password
     networks:
-      - django-cms
+      - djangocms
 
   app:
-    container_name: django-cms-app
+    container_name: djangocms-app
     build: .
-    environment:
-      - init_i18n=yes
-      - init_use-tz=yes
-      - init_permissions=yes
-      - init_languages=de en
-      - init_bootstrap=yes
-      - init_starting-page=no
-      - internal_port=9090
-      - init_postgres_host=db
-      - init_db_user=postgres
-      - init_db_password=postgres
-      - init_db_name=postgres
-      - use_gunicorn=yes
-      - gunicorn_number_of_workers=4
+    restart: unless-stopped
+    env_file:
+      - env/postgres.env
+      - env/djangocms.env
     volumes:
       - ./djangocms:/app/djangocms
     ports:
       - 9090:9090
     depends_on:
       - db
+    secrets:
+      - postgres_db
+      - postgres_user
+      - postgres_password
     networks:
-      - django-cms
+      - djangocms
+
+secrets:
+  postgres_db:
+    file: secrets/postgres_db.txt
+  postgres_user:
+    file: secrets/postgres_user.txt
+  postgres_password:
+    file: secrets/postgres_password.txt
 
 networks:
-  django-cms:
+  djangocms:
