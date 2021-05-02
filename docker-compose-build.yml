@@ -3,7 +3,7 @@ version: '3'
 services:
   db:
     container_name: djangocms-db
-    image: postgres
+    image: postgres:alpine
     restart: unless-stopped
     env_file:
       - env/postgres.env

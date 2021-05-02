@@ -1,4 +1,4 @@
-FROM python:3.9.1-slim-buster
+FROM python:3.9.4-slim-buster
 MAINTAINER Marcel Jira <marcel.jira@gmail.com>
 
 ENV PYTHONUNBUFFERED 1
@@ -18,7 +18,8 @@ RUN apt-get update; \
     pip3 --no-cache-dir install -r lib/requirements.txt && \
     pip3 --no-cache-dir install -r /app/lib/djangocmsrequirements.txt && \
     apt-get autoremove && \
-    apt-get clean;
+    apt-get clean && \
+    rm -rf /var/lab/apt/lists/*;
     
 # make directory
 VOLUME /app/djangocms-app
