@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+  db:
+    container_name: djangocms-db
+    image: postgres:alpine
+    restart: unless-stopped
+    env_file:
+      - env/postgres.env
+    volumes:
+      - ./djangodb:/var/lib/postgresql/data
+    secrets:
+      - postgres_db
+      - postgres_user
+      - postgres_password
+    networks:
+      - djangocms
+
+  app:
+    container_name: djangocms-app
+    image: speendo/djangocms-posgresql:latest
+    restart: unless-stopped
+    env_file:
+      - env/postgres.env
+      - env/djangocms.env
+    volumes:
+      - ./djangocms:/app/djangocms
+    ports:
+      - 9090:9090
+    depends_on:
+      - db
+    secrets:
+      - postgres_db
+      - postgres_user
+      - postgres_password
+    networks:
+      - djangocms
+      
+# to add ssh access (comment otherwise)
+  ssh-server:
+    container_name: djangocms-ssh
+    image: ghcr.io/linuxserver/openssh-server
+    restart: unless-stopped
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Europe/Vienna
+      - USER_NAME=djangocms
+      - PUBLIC_KEY_DIR=/run/secrets/ssh_pubkeys
+      - PASSWORD_ACCESS=false
+    volumes:
+      - ./ssh-config:/config
+      - ./djangocms:/app/djangocms # same as above
+    ports:
+      - 9022:2222
+    restart: unless-stopped
+    networks:
+      - djangocms
+    secrets:
+      - ssh_pubkeys
+# comment down to this line to prevent ssh access
+
+secrets:
+  postgres_db:
+    file: secrets/postgres_db.txt
+  postgres_user:
+    file: secrets/postgres_user.txt
+  postgres_password:
+    file: secrets/postgres_password.txt
+  ssh_pubkeys:
+    file: ssh-pubkeys # the folder to store your public keys. docker-compose v 1.28.2 shows a warning about this folder. It does still work however.
+
+networks:
+  djangocms:
