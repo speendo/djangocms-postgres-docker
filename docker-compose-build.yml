@@ -8,7 +8,7 @@ services:
     env_file:
       - env/postgres.env
     volumes:
-      - ./djangodb:/var/lib/postgresql/data      
+      - ./djangodb:/var/lib/postgresql/data
     secrets:
       - postgres_db
       - postgres_user
@@ -35,7 +35,7 @@ services:
       - postgres_password
     networks:
       - djangocms
-
+      
 secrets:
   postgres_db:
     file: secrets/postgres_db.txt
