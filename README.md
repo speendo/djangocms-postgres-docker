@@ -23,7 +23,7 @@ Simple Docker Image to create a DjangoCMS instance with a PostgreSQL data base
 
       app:
         container_name: djangocms-app
-        image: speendo/djangocms-posgresql:latest
+        image: speendo/djangocms-postgresql:latest
         restart: unless-stopped
         env_file:
           - env/postgres.env
