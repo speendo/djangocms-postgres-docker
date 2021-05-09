@@ -22,9 +22,9 @@ RUN apt-get update; \
     rm -rf /var/lab/apt/lists/*;
     
 # make directory
-VOLUME /app/djangocms-app
+VOLUME /app/djangocms
 RUN mkdir /var/www && \
-    chown -R www-data:www-data djangocms-app && \
+    chown -R www-data:www-data djangocms && \
     chown -R www-data:www-data /var/www;
 
 ENV internal_port=8000
@@ -48,7 +48,7 @@ ENV POSTGRES_DB=postgres
 
 ENV POSTGRES_PASSWORD_FILE=
 
-ENV VIRTUAL_ENV=/app/djangocms-app
+ENV VIRTUAL_ENV=/app/djangocms
 RUN python3 -m venv $VIRTUAL_ENV --system-site-packages
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
