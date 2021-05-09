@@ -22,7 +22,7 @@ RUN apt-get update; \
     rm -rf /var/lab/apt/lists/*;
     
 # make directory
-VOLUME /app/djangocms-app
+VOLUME /app/djangocms
 RUN mkdir /var/www && \
     chown -R www-data:www-data djangocms-app && \
     chown -R www-data:www-data /var/www;
