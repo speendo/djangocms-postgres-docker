@@ -49,7 +49,7 @@ ENV POSTGRES_DB=postgres
 ENV POSTGRES_PASSWORD_FILE=
 
 ENV VIRTUAL_ENV=/app/djangocms
-RUN python3 -m venv $VIRTUAL_ENV --system-site-packages
+RUN python3 -m venv $VIRTUAL_ENV/.. --system-site-packages
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Finally, start the server
