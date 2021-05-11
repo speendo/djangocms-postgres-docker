@@ -6,6 +6,8 @@ import sys
 import psycopg2
 
 # read variables
+virtual_env = os.environ['VIRTUAL_ENV']
+
 internal_port = os.environ['internal_port']
 
 init_postgres_host = os.environ['init_postgres_host']
@@ -23,6 +25,7 @@ db_user_in_file = os.path.isfile(POSTGRES_USER_FILE) and os.stat(POSTGRES_USER_F
 db_password_in_file = os.path.isfile(POSTGRES_PASSWORD_FILE) and os.stat(POSTGRES_PASSWORD_FILE).st_size != 0
 
 init_db = POSTGRES_DB
+
 if db_in_file:
 	print("database name in secret file")
 	f = open(POSTGRES_DB_FILE)
@@ -85,28 +88,28 @@ while db_ready == None:
 		else:
 			print("Giving up.")
 			sys.exit(1)
-print("Database is ready.")
+print("Database is ready")
 db_ready.close()			
 
 # check if manage.py was already created
-firstrun = not os.path.isfile("djangocms/manage.py")
+firstrun = not os.path.isfile(f"{virtual_env}/manage.py")
 
 if firstrun:
-	print("initialising project")
-	os.system(f"djangocms --db {init_database} -n --i18n {init_i18n} --use-tz {init_use_tz} {init_timezone} --permissions {init_permissions}{init_languages} --bootstrap {init_bootstrap} --starting-page {init_starting_page} -p /app/djangocms djangocms")
+	print("Initialising project")
+	os.system(f"djangocms --db {init_database} -n --i18n {init_i18n} --use-tz {init_use_tz} {init_timezone} --permissions {init_permissions}{init_languages} --bootstrap {init_bootstrap} --starting-page {init_starting_page} -p {virtual_env} djangocms")
 else:
-	print("accessing existing project")
+	print("Accessing existing project")
 
 # migrate (do this at each start to make sure any changes in settings.py are caught and start django and gunicorn
-os.system("/app/djangocms/manage.py makemigrations; /app/djangocms/manage.py migrate")
+os.system(f"{virtual_env}/manage.py makemigrations; {virtual_env}/manage.py migrate")
 
 if use_gunicorn.lower() == "yes":
-	print("serving with gunicorn")
+	print("Serving with gunicorn")
 	# collect static files in order to serve them with gunicorn
-	os.system("/app/djangocms/manage.py collectstatic --noinput --link")
+	os.system(f"{virtual_env}/manage.py collectstatic --noinput --link")
 
 	# this should run forever
-	os.system(f"su --shell /bin/sh www-data -c \"gunicorn --chdir /app/djangocms/ djangocms.wsgi -b 0.0.0.0:{internal_port} --workers={gunicorn_number_of_workers}\"")
+	os.system(f"su --shell /bin/sh www-data -c \"gunicorn --chdir {virtual_env}/ djangocms.wsgi -b 0.0.0.0:{internal_port} --workers={gunicorn_number_of_workers}\"")
 else:
 	print("serving with django's \"manage.py\"")
-	os.system(f"su --shell /bin/sh www-data -c \"/app/djangocms/manage.py runserver {internal_port}\"")
+	os.system(f"su --shell /bin/sh www-data -c \"{virtual_env}/manage.py runserver {internal_port}\"")
