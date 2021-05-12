@@ -4,6 +4,7 @@ MAINTAINER Marcel Jira <marcel.jira@gmail.com>
 ENV PYTHONUNBUFFERED 1
 
 ENV VIRTUAL_ENV=/app
+VOLUME $VIRTUAL_ENV
 WORKDIR $VIRTUAL_ENV
 COPY resources .
 
@@ -26,7 +27,6 @@ RUN apt-get update; \
 ENV project_name=djangocms
 ENV project_dir=$VIRTUAL_ENV/projects
 
-VOLUME $VIRTUAL_ENV
 RUN mkdir $project_dir && \
     mkdir /var/www && \
     chown -R www-data:www-data $project_dir && \
