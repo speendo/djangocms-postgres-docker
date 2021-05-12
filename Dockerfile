@@ -4,7 +4,6 @@ MAINTAINER Marcel Jira <marcel.jira@gmail.com>
 ENV PYTHONUNBUFFERED 1
 
 ENV VIRTUAL_ENV=/app
-VOLUME $VIRTUAL_ENV
 WORKDIR $VIRTUAL_ENV
 COPY resources .
 
