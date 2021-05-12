@@ -7,7 +7,7 @@ import psycopg2
 
 # read variables
 project_dir = os.environ['project_dir']
-project_nae = os.environ['project_name']
+project_name = os.environ['project_name']
 
 internal_port = os.environ['internal_port']
 
