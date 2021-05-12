@@ -6,7 +6,8 @@ import sys
 import psycopg2
 
 # read variables
-virtual_env = os.environ['VIRTUAL_ENV']
+project_dir = os.environ['project_dir']
+project_nae = os.environ['project_name']
 
 internal_port = os.environ['internal_port']
 
@@ -92,24 +93,24 @@ print("Database is ready")
 db_ready.close()			
 
 # check if manage.py was already created
-firstrun = not os.path.isfile(f"{virtual_env}/manage.py")
+firstrun = not os.path.isfile(f"{project_dir}/manage.py")
 
 if firstrun:
 	print("Initialising project")
-	os.system(f"djangocms --db {init_database} -n --i18n {init_i18n} --use-tz {init_use_tz} {init_timezone} --permissions {init_permissions}{init_languages} --bootstrap {init_bootstrap} --starting-page {init_starting_page} -p {virtual_env} djangocms")
+	os.system(f"djangocms --db {init_database} -n --i18n {init_i18n} --use-tz {init_use_tz} {init_timezone} --permissions {init_permissions}{init_languages} --bootstrap {init_bootstrap} --starting-page {init_starting_page} -p {project_dir} {project_name}")
 else:
 	print("Accessing existing project")
 
 # migrate (do this at each start to make sure any changes in settings.py are caught and start django and gunicorn
-os.system(f"{virtual_env}/manage.py makemigrations; {virtual_env}/manage.py migrate")
+os.system(f"{project_dir}/manage.py makemigrations; {project_dir}/manage.py migrate")
 
 if use_gunicorn.lower() == "yes":
 	print("Serving with gunicorn")
 	# collect static files in order to serve them with gunicorn
-	os.system(f"{virtual_env}/manage.py collectstatic --noinput --link")
+	os.system(f"{project_dir}/manage.py collectstatic --noinput --link")
 
 	# this should run forever
-	os.system(f"su --shell /bin/sh www-data -c \"gunicorn --chdir {virtual_env}/ djangocms.wsgi -b 0.0.0.0:{internal_port} --workers={gunicorn_number_of_workers}\"")
+	os.system(f"su --shell /bin/sh www-data -c \"gunicorn --chdir {project_dir}/ djangocms.wsgi -b 0.0.0.0:{internal_port} --workers={gunicorn_number_of_workers}\"")
 else:
 	print("serving with django's \"manage.py\"")
-	os.system(f"su --shell /bin/sh www-data -c \"{virtual_env}/manage.py runserver {internal_port}\"")
+	os.system(f"su --shell /bin/sh www-data -c \"{project_dir}/manage.py runserver {internal_port}\"")

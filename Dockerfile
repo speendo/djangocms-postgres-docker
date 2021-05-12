@@ -3,7 +3,8 @@ MAINTAINER Marcel Jira <marcel.jira@gmail.com>
 
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR /app
+ENV VIRTUAL_ENV=/app
+WORKDIR $VIRTUAL_ENV
 COPY resources .
 
 RUN apt-get update; \
@@ -22,9 +23,13 @@ RUN apt-get update; \
     rm -rf /var/lab/apt/lists/*;
     
 # make directory
-VOLUME /app/djangocms
-RUN mkdir /var/www && \
-    chown -R www-data:www-data djangocms && \
+ENV project_name=djangocms
+ENV project_dir=$VIRTUAL_ENV/projects
+
+VOLUME $VIRTUAL_ENV
+RUN mkdir $project_dir && \
+    mkdir /var/www && \
+    chown -R www-data:www-data $project_dir && \
     chown -R www-data:www-data /var/www;
 
 ENV internal_port=8000
@@ -48,8 +53,7 @@ ENV POSTGRES_DB=postgres
 
 ENV POSTGRES_PASSWORD_FILE=
 
-ENV VIRTUAL_ENV=/app/djangocms
-RUN python3 -m venv $VIRTUAL_ENV/.. --system-site-packages
+RUN python3 -m venv $VIRTUAL_ENV --system-site-packages
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Finally, start the server
