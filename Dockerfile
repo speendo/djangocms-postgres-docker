@@ -19,8 +19,8 @@ RUN mkdir /startupScripts && \
         libfreetype6-dev \
         python3-venv \
         python3-psycopg2 && \
-    pip3 --no-cache-dir install -r $template_env/lib/requirements.txt && \
-    pip3 --no-cache-dir install -r $template_env/lib/djangocmsrequirements.txt && \
+    pip3 --no-cache-dir install -r $template_env/req/requirements.txt && \
+    pip3 --no-cache-dir install -r $template_env/req/djangocmsrequirements.txt && \
     apt-get autoremove && \
     apt-get clean && \
     rm -rf /var/lab/apt/lists/*;

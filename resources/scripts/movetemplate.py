@@ -27,6 +27,8 @@ if templatePresent:
 		print("Create venv")
 		os.system(f"python3 -m venv {VIRTUAL_ENV} --system-site-packages")
 		print(f"When logged into the container (e.g. with \"docker exec -it <container-name> /bin/bash\") venv can be activated with \"source {VIRTUAL_ENV}/bin/activate\"")
+		print("Upgrade pip")
+		os.system(f"{VIRTUAL_ENV}/bin/python3 -m pip install --upgrade pip")
 
 	# check if projects folder is present
 	projectsNotPresent = not os.path.isdir(f"{project_dir}")
