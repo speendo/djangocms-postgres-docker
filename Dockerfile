@@ -59,10 +59,8 @@ ENV POSTGRES_PASSWORD_FILE=
 # Activate venv
 ENV VIRTUAL_ENV=/app
 # RUN python3 -m venv $VIRTUAL_ENV --system-site-packages
-# Notice the different location "$template_env"
-# This is because a bind mount to $VIRTUAL_ENV would obscure $VIRTUAL_ENV
+# Because a bind mount to $VIRTUAL_ENV would obscure $VIRTUAL_ENV, this has to be done later in "movetemplate.py"
 # Also see https://docs.docker.com/storage/bind-mounts/#mount-into-a-non-empty-directory-on-the-container
-RUN python3 -m venv $template_env --system-site-packages 
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 ENV project_dir=$VIRTUAL_ENV/projects
