@@ -42,7 +42,6 @@ RUN mkdir -p $template_project_dir && \
     chown -R www-data:www-data $template_project_dir && \
     chown -R www-data:www-data /var/www;
 
-
 COPY resources $template_env
 
 # install basic stuff
