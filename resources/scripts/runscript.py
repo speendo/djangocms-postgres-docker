@@ -1,8 +1,4 @@
 #!/app/bin/python3
-
-# move template folder to /app and setup environment
-import movetemplate
-
 import os
 import subprocess
 
