@@ -4,7 +4,7 @@ if [ -d "${template_env}" ]; then
 	echo "Setup template"
 	
 	# check if venv is present
-	if [ ! -f "${VIRTUALENV}/bin/activate" ]; then
+	if [ ! -f "${VIRTUAL_ENV}/bin/activate" ]; then
 		echo "venv not present - move template folder to /app"
 		mv -u ${template_env}/* ${VIRTUAL_ENV}/
 		
