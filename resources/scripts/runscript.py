@@ -1,14 +1,18 @@
-#!/usr/bin/python3
+#!/app/bin/python3
+
+# move template folder to /app and setup environment
+import movetemplate
+
 import os
+import subprocess
 
 import time
 import sys
 import psycopg2
 
-# move template folder to /app
-import movetemplate
-
 # read variables
+VIRTUAL_ENV = os.environ['VIRTUAL_ENV']
+
 project_dir = os.environ['project_dir']
 project_name = os.environ['project_name']
 
@@ -65,16 +69,27 @@ init_starting_page = os.environ['init_starting_page']
 use_gunicorn = os.environ['use_gunicorn']
 gunicorn_number_of_workers = os.environ['gunicorn_number_of_workers']
 
-init_languages = init_languages.replace(" ", " -l ")
-init_languages = " -l " + init_languages if init_languages != "" else ""
-
-init_timezone = "--timezone " + init_timezone if init_timezone != "" else ""
-
 init_i18n = "no" if init_i18n == "no" else "yes"
 init_use_tz = "no" if init_use_tz == "no" else "yes"
 init_permissions = "yes" if init_permissions == "yes" else "no"
 init_bootstrap = "yes" if init_bootstrap == "yes" else "no"
 init_starting_page = "yes" if init_starting_page == "yes" else "no"
+
+# setup djangocms call
+django_cms_call = ["djangocms"] # base command
+django_cms_call += ["--db", init_database] # add database
+django_cms_call += ["--no-deps"] # don't install package dependencies
+django_cms_call += ["--i18n", init_i18n] # add i18n
+django_cms_call += ["--use-tz", init_use_tz] # activate timezone-support
+if init_timezone != "":
+	django_cms_call += ["--timezone", init_timezone] # add timezone if specified
+django_cms_call += ["--permissions", init_permissions] # add permissions
+for lang in init_languages.split():
+	django_cms_call += ["--languages", lang] # add languages
+django_cms_call += ["--bootstrap", init_bootstrap] # add bootstrap
+django_cms_call += ["--starting-page", init_starting_page] # add starting page
+django_cms_call += ["--parent-dir", project_dir] # add parent_dir
+django_cms_call += [project_name] # add project name
 
 # test database connection
 
@@ -100,20 +115,21 @@ firstrun = not os.path.isfile(f"{project_dir}/manage.py")
 
 if firstrun:
 	print("Initialising project")
-	os.system(f"djangocms --db {init_database} -n --i18n {init_i18n} --use-tz {init_use_tz} {init_timezone} --permissions {init_permissions}{init_languages} --bootstrap {init_bootstrap} --starting-page {init_starting_page} -p {project_dir} {project_name}")
+	subprocess.run(django_cms_call, check=True)
 else:
 	print("Accessing existing project")
 
 # migrate (do this at each start to make sure any changes in settings.py are caught and start django and gunicorn
-os.system(f"{project_dir}/manage.py makemigrations; {project_dir}/manage.py migrate")
+subprocess.run([f"{project_dir}/manage.py", "makemigrations"], check=True)
+subprocess.run([f"{project_dir}/manage.py", "migrate"], check=True)
 
 if use_gunicorn.lower() == "yes":
 	print("Serving with gunicorn")
 	# collect static files in order to serve them with gunicorn
-	os.system(f"{project_dir}/manage.py collectstatic --noinput --link")
+	subprocess.run([f"{project_dir}/manage.py", "collectstatic", "--noinput", "--link"], check=True)
 
 	# this should run forever
-	os.system(f"su --shell /bin/sh www-data -c \"gunicorn --chdir {project_dir}/ {project_name}.wsgi -b 0.0.0.0:{internal_port} --workers={gunicorn_number_of_workers}\"")
+	os.system(f"su --shell /bin/sh www-data -c \"{VIRTUAL_ENV}/bin/gunicorn --chdir {project_dir}/ {project_name}.wsgi -b 0.0.0.0:{internal_port} --workers={gunicorn_number_of_workers}\"")
 else:
 	print("serving with django's \"manage.py\"")
 	os.system(f"su --shell /bin/sh www-data -c \"{project_dir}/manage.py runserver {internal_port}\"")

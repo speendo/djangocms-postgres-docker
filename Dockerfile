@@ -5,35 +5,9 @@ ENV PYTHONUNBUFFERED 1
 
 ENV template_env=/template
 
-COPY resources $template_env
-
-RUN mkdir /startupScripts && \
-    mv $template_env/scripts/movetemplate.py /startupScripts/ && \
-    mv $template_env/scripts/runscript.py /startupScripts/ && \
-    apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-        libtiff-dev \
-        libjpeg-dev \
-        zlib1g-dev \
-        libfreetype6-dev \
-        python3-venv \
-        python3-psycopg2 && \
-    pip3 --no-cache-dir install -r $template_env/req/requirements.txt && \
-    pip3 --no-cache-dir install -r $template_env/req/djangocmsrequirements.txt && \
-    apt-get autoremove && \
-    apt-get clean && \
-    rm -rf /var/lab/apt/lists/*;
-    
-# make directory
 ENV project_name=djangocms
 
 ENV template_project_dir=$template_env/projects
-
-RUN mkdir $template_project_dir && \
-    mkdir /var/www && \
-    chown -R www-data:www-data $template_project_dir && \
-    chown -R www-data:www-data /var/www;
 
 ENV internal_port=8000
 ENV use_gunicorn=yes
@@ -56,15 +30,40 @@ ENV POSTGRES_DB=postgres
 
 ENV POSTGRES_PASSWORD_FILE=
 
-# Activate venv
+# Prepare venv
 ENV VIRTUAL_ENV=/app
-# RUN python3 -m venv $VIRTUAL_ENV --system-site-packages
-# Because a bind mount to $VIRTUAL_ENV would obscure $VIRTUAL_ENV, this has to be done later in "movetemplate.py"
-# Also see https://docs.docker.com/storage/bind-mounts/#mount-into-a-non-empty-directory-on-the-container
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 ENV project_dir=$VIRTUAL_ENV/projects
 
+# make directory
+RUN mkdir -p $template_project_dir && \
+    mkdir /var/www && \
+    chown -R www-data:www-data $template_project_dir && \
+    chown -R www-data:www-data /var/www;
+
+
+COPY resources $template_env
+
+# install basic stuff
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+        libtiff-dev \
+        libjpeg-dev \
+        zlib1g-dev \
+        libfreetype6-dev \
+        python3-venv \
+        python3-psycopg2 && \
+#   Do this in startscript.sh to make sure it is done in the venv and not globally        
+#   pip3 --no-cache-dir install -r $template_env/req/requirements.txt && \
+#   pip3 --no-cache-dir install -r $template_env/req/djangocmsrequirements.txt && \
+    apt-get autoremove && \
+    apt-get clean && \
+    rm -rf /var/lab/apt/lists/*;
+
+RUN mv $template_env/scripts /scripts;
+    
 # Finally, start the server
 EXPOSE $internal_port
 # STOPSIGNAL SIGTERM
@@ -72,4 +71,4 @@ EXPOSE $internal_port
 VOLUME $VIRTUAL_ENV
 WORKDIR $VIRTUAL_ENV
 
-CMD python3 /startupScripts/runscript.py
+CMD /scripts/startscript.sh;
