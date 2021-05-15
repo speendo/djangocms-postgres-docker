@@ -85,7 +85,7 @@ for lang in init_languages.split():
 django_cms_call += ["--bootstrap", init_bootstrap] # add bootstrap
 django_cms_call += ["--starting-page", init_starting_page] # add starting page
 django_cms_call += ["--parent-dir", project_dir] # add parent_dir
-django_cms_call += [project_name] # add project name
+django_cms_call += [project_name, "--skip-empty-check"] # add project name and skip empty check
 
 # test database connection
 
@@ -106,10 +106,10 @@ while db_ready == None:
 print("Database is ready")
 db_ready.close()			
 
-# check if manage.py was already created
-firstrun = not os.path.isfile(f"{project_dir}/manage.py")
+# check if project was already created
+project_not_present = not os.path.isfile(f"{project_dir}/{project_name}/settings.py")
 
-if firstrun:
+if project_not_present:
 	print("Initialising project")
 	subprocess.run(django_cms_call, check=True)
 else:
