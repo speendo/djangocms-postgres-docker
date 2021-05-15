@@ -116,13 +116,13 @@ else:
 	print("Accessing existing project")
 
 # migrate (do this at each start to make sure any changes in settings.py are caught and start django and gunicorn
-subprocess.run([f"{VIRTUAL_ENV}/python3", f"{project_dir}/manage.py", "makemigrations"], check=True)
-subprocess.run([f"{VIRTUAL_ENV}/python3", f"{project_dir}/manage.py", "migrate"], check=True)
+subprocess.run([f"{VIRTUAL_ENV}/bin/python3", f"{project_dir}/manage.py", "makemigrations"], check=True)
+subprocess.run([f"{VIRTUAL_ENV}/bin/python3", f"{project_dir}/manage.py", "migrate"], check=True)
 
 if use_gunicorn.lower() == "yes":
 	print("Serving with gunicorn")
 	# collect static files in order to serve them with gunicorn
-	subprocess.run([f"{VIRTUAL_ENV}/python3", f"{project_dir}/manage.py", "collectstatic", "--noinput", "--link"], check=True)
+	subprocess.run([f"{VIRTUAL_ENV}/bin/python3", f"{project_dir}/manage.py", "collectstatic", "--noinput", "--link"], check=True)
 
 	# this should run forever
 	os.system(f"su --shell /bin/sh www-data -c \"{VIRTUAL_ENV}/bin/gunicorn --chdir {project_dir}/ {project_name}.wsgi -b 0.0.0.0:{internal_port} --workers={gunicorn_number_of_workers}\"")
