@@ -128,4 +128,4 @@ if use_gunicorn.lower() == "yes":
 	subprocess.run([f"{VIRTUAL_ENV}/bin/gunicorn", "--chdir", f"{project_dir}/", f"{project_name}.wsgi", "-b", f"0.0.0.0:{internal_port}", f"--workers={gunicorn_number_of_workers}"], check=True)
 else:
 	print("serving with django's \"manage.py\"")
-	subprocess.run([f"{project_dir}/manage.py", "runserver", f"{internal_port}"], check=True)
+	subprocess.run([f"{project_dir}/manage.py", "runserver", f"0.0.0.0:{internal_port}"], check=True)
