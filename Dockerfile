@@ -60,10 +60,7 @@ RUN mkdir -p $VIRTUAL_ENV && \
     mv $template_env/scripts /scripts && \
     chown -R www-data:www-data \
         /var/www \
-        $VIRTUAL_ENV \
-        $template_env && \
-    chmod -R 775 $template_env && \
-    chmod -R g+s $template_env && \
+        $VIRTUAL_ENV && \
     chown -R root:www-data /scripts && \
     chmod -R g-w,g+rx /scripts && \
     echo "www-data ALL=(root) NOPASSWD: /scripts/install_user_debian_packages.sh, /scripts/move_template.sh" >> /etc/sudoers;
