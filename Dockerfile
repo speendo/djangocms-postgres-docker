@@ -36,17 +36,11 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 ENV project_dir=$VIRTUAL_ENV/projects
 
-# make directory and ensure correct permissions in template
-RUN mkdir -p $template_project_dir && \
-    mkdir /var/www && \
-    chown -R www-data:www-data /var/www;
-
-COPY resources $template_env
-
 # install basic stuff
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
+    	sudo \
         libtiff-dev \
         libjpeg-dev \
         zlib1g-dev \
@@ -57,13 +51,28 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lab/apt/lists/*;
 
-RUN mv $template_env/scripts /scripts;
-    
-# Finally, start the server
+# make directory and ensure correct permissions in template
+COPY resources $template_env
+
+RUN mkdir -p $VIRTUAL_ENV && \
+    mkdir -p $template_project_dir && \
+    mkdir /var/www && \
+    mv $template_env/scripts /scripts && \
+    chown -R www-data:www-data \
+        /var/www \
+        $VIRTUAL_ENV \
+        $template_env && \
+    chmod -R 775 $template_env && \
+    chmod -R g+s $template_env && \
+    chown -R root:www-data /scripts && \
+    chmod -R g-w,g+rx /scripts && \
+    echo "www-data ALL=(root) NOPASSWD: /scripts/install_user_debian_packages.sh, /scripts/move_template.sh" >> /etc/sudoers;
+
 EXPOSE $internal_port
 # STOPSIGNAL SIGTERM
-
 VOLUME $VIRTUAL_ENV
 WORKDIR $VIRTUAL_ENV
+
+USER www-data
 
 CMD /scripts/startscript.sh;
