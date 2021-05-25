@@ -33,6 +33,12 @@ if [ -d "${template_env}" ]; then
 		su --shell /bin/sh www-data -c "mv -u ${template_project_dir} ${project_dir}"
 	fi
 	
+	# install other requirements specified by the user
+	echo "Install additionally specified Debian packages from ${VIRTUAL_ENV}/req/user_debianpackages.txt"
+	apt-get install -y --no-install-recommends $(grep -vE "^\s*#" ${VIRTUAL_ENV}/req/user_debianpackages.txt | sed -e 's/#.*//'  | tr "\n" " ")
+	echo "Install additionally specified Python packages from ${VIRTUAL_ENV}/req/user_pythonpackages.txt"
+	su --shell /bin/sh www-data -c "${VIRTUAL_ENV}/bin/pip3 --no-cache-dir install -r ${VIRTUAL_ENV}/req/user_pythonpackages.txt"
+	
 	# finally, delete template folder
 	echo "Delete template"
 	rm -r ${template_env}
