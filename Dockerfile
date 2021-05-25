@@ -3,11 +3,7 @@ MAINTAINER Marcel Jira <marcel.jira@gmail.com>
 
 ENV PYTHONUNBUFFERED 1
 
-ENV template_env=/template
-
 ENV project_name=djangocms
-
-ENV template_project_dir=$template_env/projects
 
 ENV internal_port=8000
 ENV use_gunicorn=yes
@@ -30,16 +26,19 @@ ENV POSTGRES_DB=postgres
 
 ENV POSTGRES_PASSWORD_FILE=
 
+# Prepare template
+ENV template_env=/template
+ENV template_project_dir=$template_env/projects
+
 # Prepare venv
 ENV VIRTUAL_ENV=/app
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 ENV project_dir=$VIRTUAL_ENV/projects
 
-# make directory
+# make directory and ensure correct permissions in template
 RUN mkdir -p $template_project_dir && \
     mkdir /var/www && \
-    chown -R www-data:www-data $template_project_dir && \
     chown -R www-data:www-data /var/www;
 
 COPY resources $template_env
@@ -54,9 +53,6 @@ RUN apt-get update && \
         libfreetype6-dev \
         python3-venv \
         python3-psycopg2 && \
-#   Do this in startscript.sh to make sure it is done in the venv and not globally        
-#   pip3 --no-cache-dir install -r $template_env/req/requirements.txt && \
-#   pip3 --no-cache-dir install -r $template_env/req/djangocmsrequirements.txt && \
     apt-get autoremove && \
     apt-get clean && \
     rm -rf /var/lab/apt/lists/*;

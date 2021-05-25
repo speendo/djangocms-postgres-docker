@@ -125,7 +125,7 @@ if use_gunicorn.lower() == "yes":
 	subprocess.run([f"{VIRTUAL_ENV}/bin/python3", f"{project_dir}/manage.py", "collectstatic", "--noinput", "--link"], check=True)
 
 	# this should run forever
-	os.system(f"su --shell /bin/sh www-data -c \"{VIRTUAL_ENV}/bin/gunicorn --chdir {project_dir}/ {project_name}.wsgi -b 0.0.0.0:{internal_port} --workers={gunicorn_number_of_workers}\"")
+	subprocess.run([f"{VIRTUAL_ENV}/bin/gunicorn", "--chdir", f"{project_dir}/", f"{project_name}.wsgi", "-b", f"0.0.0.0:{internal_port}", f"--workers={gunicorn_number_of_workers}"], check=True)
 else:
 	print("serving with django's \"manage.py\"")
-	os.system(f"su --shell /bin/sh www-data -c \"{project_dir}/manage.py runserver {internal_port}\"")
+	subprocess.run([f"{project_dir}/manage.py", "runserver", f"{internal_port}"], check=True)
