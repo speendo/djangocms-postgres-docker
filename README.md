@@ -1,53 +1,21 @@
-# djangocms-postgres-docker
-Simple Docker Image to create a DjangoCMS instance with a PostgreSQL data base
+# What is django CMS?
+[django CMS](https://www.django-cms.org/) is a free and open source content management system platform for publishing content on the World Wide Web and intranets. It is written in Django language framework, with Python.
 
-# sample docker-compose.yml
+(Source: [Wikipedia](https://en.wikipedia.org/wiki/Django_CMS))
 
-    version: '3'
+# What's the Purpose of this Project?
+**It provides a productive django CMS environment in a [Docker](https://www.docker.com/) container.**
 
-    services:
-      db:
-        container_name: djangocms-db
-        image: postgres
-        restart: unless-stopped
-        env_file:
-          - env/postgres.env
-        volumes:
-          - ./djangodb:/var/lib/postgresql/data
-        secrets:
-          - postgres_db
-          - postgres_user
-          - postgres_password
-        networks:
-          - djangocms
+It's based on the [official python image](https://github.com/docker-library/python) and utilizes the [django CMS Installer](https://djangocms-installer.readthedocs.io/en/latest/readme.html).
 
-      app:
-        container_name: djangocms-app
-        image: speendo/djangocms-postgresql:latest
-        restart: unless-stopped
-        env_file:
-          - env/postgres.env
-          - env/djangocms.env
-        volumes:
-          - ./djangocms:/app/djangocms
-        ports:
-          - 9090:9090
-        depends_on:
-          - db
-        secrets:
-          - postgres_db
-          - postgres_user
-          - postgres_password
-        networks:
-          - djangocms
+The resulting web site can be served with django's internal development server, but there's also a builtin option to use [gunicorn](https://gunicorn.org/) instead, which is more secure and stable and therefore useful for productive sites.
 
-    secrets:
-      postgres_db:
-        file: secrets/postgres_db.txt
-      postgres_user:
-        file: secrets/postgres_user.txt
-      postgres_password:
-        file: secrets/postgres_password.txt
+A [PostgreSQL database](https://www.postgresql.org/) is required in order to run this image. However, this requirement can easily be met using a [PostgreSQL Docker image](https://github.com/docker-library/postgres). The Docker Compose samples provided in this repository use this method.
 
-    networks:
-      djangocms:
+# How to use this image?
+## Requirements
+In order to run this image, you need a [working installation of Docker](https://docs.docker.com/get-docker/).
+
+Furthermore [Docker Compose](https://docs.docker.com/compose/install/) is recommended. Although it is possible to provide all arguments in Docker's command line interface, all documentation in this repository assumes that Docker Compose is installed.
+
+## Setup the project
