@@ -62,7 +62,7 @@ Choose no to use the internal development server or yes to use gunicorn instead.
 *Different to other parameters, this parameter can be changed whenever you restart the docker container*
 
 **use_gunicorn** (yes|no, *default=yes*)  
-Choose no to use the internal development server or yes to use gunicorn instead. Gunicorn is safer and recommended to be used on productive pages, howerver the internal server is much more convenient for development.  
+Choose `no` to use the internal development server or `yes` to use gunicorn instead. Gunicorn is safer and recommended to be used on productive pages, however the internal server is much more convenient for development.  
 *Different to other parameters, this parameter can be changed whenever you restart the docker container*
 
 **use_gunicorn** (number, *default=2*)  
