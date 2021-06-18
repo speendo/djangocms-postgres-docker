@@ -21,14 +21,14 @@ Furthermore [Docker Compose](https://docs.docker.com/compose/install/) is recomm
 ## Setup the project
 1. **Optional:** Clone this repository
 2. Copy one of the docker-compose examples in [docker-compose_examples](docker-compose_examples/) (preferably start with [docker-compose_default.yml](docker-compose_examples/docker-compose_default.yml) unless you need one of the features adressed in the other examples) to `docker-compose.yml`
-3. Create a file `env/djangocms.env` with parameters from [`djangocms.env`](#djangocms.env)
-4. Create a file `env/postgres.env` with parameters from [`postgres.env`](#postgres.env)
+3. Create a file `env/djangocms.env` with parameters from [`djangocms.env`](#djangocmsenv)
+4. Create a file `env/postgres.env` with parameters from [`postgres.env`](#postgresenv)
 5. Create a folder `secrets/` and put the following files inside this folder
   * `postgres_db.txt` containing a string with the name of your PostgreSQL database (not to be mixed up with the host name)
   * `postgres_user.txt` containing the username to access your PostgreSQL database
   * `postgres_password.txt` containing the user password for the user to access your PostgreSQL database
 6. Start a shell, navigate to the project folder and run `docker-compose up -d`
-7. Once the container is created and ready, you should be able to access your Django CMS installation on your browser at [`http://localhost:8000`](`http://localhost:8000`)
+7. Once the container is created and ready, you should be able to access your Django CMS installation on your browser at http://localhost:8000
 
 # Environment Variables
 Environment variables are stored in the `env` folder and split up into `postgres.env` (covering database options) and `djangocms.env` (covering everything else). With a little knowledge in Docker compose, you could also specify those parameters directly in the Docker compose file. Personally, I prefer to keep those parameters in seperate files.
