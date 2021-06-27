@@ -50,7 +50,7 @@ In principle you can modify the system to your needs by logging into the contain
 ### Linux packages
 This image is based on Debian Stable. In order to add a Debian package, modify `/app/req/user_debianpackages.txt` and add one package per line. The package shall be installed when restarting the Docker container.
 ### Python packages
-This image is based on Debian Stable. In order to add a Debian package, modify `/app/req/pythonpackages.txt` and add one package per line. The package shall be installed when restarting the Docker container.
+In order to add a Python package, modify `/app/req/pythonpackages.txt` and add one package per line. The package shall be installed (using `pip`) when restarting the Docker container.
 
 # Environment Variables
 Environment variables are stored in the `env` folder and split up into `postgres.env` (covering database options) and `djangocms.env` (covering everything else). With a little knowledge in Docker compose, you could also specify those parameters directly in the Docker compose file. Personally, I prefer to keep those parameters in seperate files.
