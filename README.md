@@ -30,6 +30,28 @@ Furthermore [Docker Compose](https://docs.docker.com/compose/install/) is recomm
 6. Start a shell, navigate to the project folder and run `docker-compose up -d`
 7. Once the container is created and ready, you should be able to access your Django CMS installation on your browser at http://localhost:8000
 
+# Features and How-Tos
+## Configure a new project
+When the Docker container is started, it first checks if the file `/app/bin/activate` is present. If it's not present the system assumes that the system needs to be configured and will setup a [venv](https://docs.python.org/3/library/venv.html) in the `/app/` folder. Furthermore it will install several requirements to run django CMS.
+
+After that the startup script checks if the folder `/app/projects/` is present. If it's presemt already, the system assumes that this is either not the first boot of the system or that you try to migrate from another installation and will skip the setup process. Otherwise a new django CMS project will be initialized in `/app/projects/<project_name>/` (where `<project_name>` is an environment variable - see [below](#djangocmsenv)).
+
+## Migrating and upgrading
+Sometimes you might want to migrate an existing project to a new docker container, e.g. when upgrading to a newer version. To perform a migration of an existing project (stored in `/your/host/path/projects/<project_name>`) make sure that the Docker container recognizes the folder `/your/host/path/projects` as `/app/projects`. A good way to achieve this to mount the host folder `/your/host/path` to `/app` in the container. Your `docker-compose.yml` should look like this
+
+    app:
+      [...]
+      volumes:
+        - /your/host/path:/app
+      [...]
+
+## Install additional Linux and Python packages
+In principle you can modify the system to your needs by logging into the container and performing the changes you desire. However, this procedure is not optimal as these changes won't sustain typical procedures (like upgrading the Docker image). As the more likely changes are limited to enhance the container's features with additional Linux and/or Python packages, the image provides ways to permanently add those.
+### Linux packages
+This image is based on Debian Stable. In order to add a Debian package, modify `/app/req/user_debianpackages.txt` and add one package per line. The package shall be installed when restarting the Docker container.
+### Python packages
+This image is based on Debian Stable. In order to add a Debian package, modify `/app/req/pythonpackages.txt` and add one package per line. The package shall be installed when restarting the Docker container.
+
 # Environment Variables
 Environment variables are stored in the `env` folder and split up into `postgres.env` (covering database options) and `djangocms.env` (covering everything else). With a little knowledge in Docker compose, you could also specify those parameters directly in the Docker compose file. Personally, I prefer to keep those parameters in seperate files.
 ## djangocms.env
