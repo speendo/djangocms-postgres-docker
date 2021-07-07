@@ -12,6 +12,9 @@ The resulting web site can be served with django's internal development server, 
 
 A [PostgreSQL database](https://www.postgresql.org/) is required in order to run this image. However, this requirement can easily be met using a [PostgreSQL Docker image](https://github.com/docker-library/postgres). The Docker Compose samples provided in this repository use this method.
 
+# Tags
+* `3.9.0`, `3.9`, `3`, `latest` - django CMS 3.9.0
+
 # How to use this image?
 ## Requirements
 In order to run this image, you need a [working installation of Docker](https://docs.docker.com/get-docker/).
