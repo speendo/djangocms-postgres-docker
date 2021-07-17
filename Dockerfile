@@ -40,7 +40,7 @@ ENV project_dir=$VIRTUAL_ENV/projects
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
-    	sudo \
+	sudo \
         libtiff-dev \
         libjpeg-dev \
         zlib1g-dev \
